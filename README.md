@@ -1,51 +1,23 @@
-# DPS Frontend Coding Challenge: German Address Validator #
+## DPS Frontend Coding Challenge: German Address Validator
 
-Your task is to build a small web application that validates German postal codes (PLZ) and localities using the **Open PLZ API**.
-API reference: https://www.openplzapi.org/en/germany.
+This is my submission for the DPS front-end challenge you prodivded.
 
-## Project Setup
+## Description of Solution
 
-This repository comes **pre-configured with React and Vite**. You are free to use additional tools or libraries.
-You may either fork this repository or create a new one and restructure the application as you see fit.
+I implemented both form fields as asked and included appropriate error handling in case a locality/ PLZ was not found or the API could not be reached or similar.
+I have also included a debounce of one second for both fields. The debounce value will be used for the API request if the user has not typed anything for a full second.
 
-## Environment Setup
+The project can be run just like any react application using `npm i` followed by `npm run dev`.
 
-Ensure you have Node.js (v14.x or later) and npm (v6.x or later) installed.  
-To set up and run the application, execute the following commands:
 
-```
-npm install
-npm run dev
-```
+## AI Usage Statement
 
-The application will then be accessible at http://localhost:3000.
+I have utilized the lovable.dev agent exclusively for the design of the website. It gave me a design i deemed fitting for this the challenge after a single prompt:
 
-## Project Description
+`I need you to build some non-distracting, easy to look at ui components for a single-page react application. Build at least an input, a dropdown, a title and some paper component which the other elements can sit in for visual separation. Be sure to include a dark theme. The theme should fit an official website for looking up information - think intuitive, clean. I also need a spinner (loading).`
+I published the whole project which was generated from the prompt in [this](https://github.com/kabutos001/dps-frontend-components) repository.
 
-Create an address input form with two required fields.
-- **Locality** (city/town name)
-- **Postal Code (PLZ)**
-These fields must validate each other using live data from the Open PLZ API.
+## Additional Thoughts
 
-**Usage scenarios.**
-1. Lookup by locality. When the user types a city/town name:
-- If one postal code exists for this locality → automatically fill the PLZ field.
-- If multiple postal codes exist → convert the PLZ field into a dropdown.
-2. Lookup by postal code. When the user enters a PLZ:
-- If PLZ is valid → automatically fill the locality field.
-- If PLZ is invalid → show an error message.
+This was my first time trying out such a full-fledged AI agent which fully implements your prompt on its own and have to admit that i was very impressed by how well it looked. I think utilizing AI tools to a certain (healthy) extent can really boost productivity for a time-critical project such as the DPS.
 
-[Optional task] **Debounce**. Implement a 1-second debounce on both inputs before API calls.
-
-## AI Usage Rules
-
-You are allowed to use AI tools to complete this task. However, **transparency is required**.
-Please include a small artifact folder or a markdown section with:
-- Links to ChatGPT / Claude / Copilot conversations
-- Any prompts used (copy/paste the prompt text if links are private)
-- Notes about what parts were AI-assisted
-- Any generated code snippets you modified or rejected
-
-This helps us understand your workflow and decision-making process, not to judge AI usage.
-
-Happy coding!

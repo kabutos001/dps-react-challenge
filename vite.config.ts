@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,4 +13,9 @@ export default defineConfig({
 		strictPort: true,
 		port: 3000, // replace this port with any number you want
 	},
+	resolve: {
+		alias: {
+			"@": path.resolve(__dirname, "./src"),
+		}
+	}
 });
