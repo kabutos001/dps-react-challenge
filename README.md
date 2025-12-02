@@ -15,7 +15,9 @@ The project can be run just like any react application using `npm i` followed by
 I have utilized the lovable.dev agent exclusively for the design of the website. It gave me a design i deemed fitting for this the challenge after a single prompt:
 
 `I need you to build some non-distracting, easy to look at ui components for a single-page react application. Build at least an input, a dropdown, a title and some paper component which the other elements can sit in for visual separation. Be sure to include a dark theme. The theme should fit an official website for looking up information - think intuitive, clean. I also need a spinner (loading).`
-I published the whole project which was generated from the prompt in [this](https://github.com/kabutos001/dps-frontend-components) repository.
+
+I published the whole project which was generated from the prompt in [this](https://github.com/kabutos001/dps-frontend-components) repository. 
+The components i have taken out of the ai-generated repository are found in the src/components/ui directory.
 
 ## Additional Thoughts
 
