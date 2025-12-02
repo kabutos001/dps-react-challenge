@@ -23,16 +23,16 @@ export default function Test() {
     // page == 0 is invalid for this API, manual handling required
     const [page, setPage] = useState(1);
     const [locality, setLocality] = useState<string>("");
-    const [PLZQuery, setPLZQuery] = useState<string>("");
+    const [postalCode, setPostalCode] = useState<string>("");
     const [postalCodes, setPostalCodes] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const [localityError, setLocalityError] = useState<string>("");
     const [postalCodeError, setPostalCodeError] = useState<string>("");
-
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const debounceQuery = useDebounceValue(locality, 1000);
-    const debouncePLZQuery = useDebounceValue(PLZQuery, 1000);
+    const debounceLocality = useDebounceValue(locality, 1000);
+    const debouncePostalCode = useDebounceValue(postalCode, 1000);
 
     const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -44,14 +44,14 @@ export default function Test() {
             abortControllerRef.current = new AbortController();
 
             setIsLoading(true);
-            if ((!locality || locality.length < 3) || (!page || page < 1)) {
+            if ((!debounceLocality || debounceLocality.length < 3) || (!page || page < 1)) {
                 setPostalCodes([]);
                 setShowDropdown(false);
                 return;
             }
             try {
                 const response = await fetch(
-                    `${BASE_URL}/Localities?name=${debounceQuery}&page=${page}`,
+                    `${BASE_URL}/Localities?name=${debounceLocality}&page=${page}`,
                     { signal: abortControllerRef.current?.signal } // renew controller, can't reuse them
                 );
                 const PLZs = (await response.json()) as Locality[];
@@ -61,7 +61,7 @@ export default function Test() {
                     setPostalCodes([]);
                     setShowDropdown(false);
                 } else if (PLZs.length === 1) {
-                    setPLZQuery(PLZs[0].postalCode);
+                    setPostalCode(PLZs[0].postalCode);
                     setPostalCodes([]);
                     setShowDropdown(false);
                 } else {
@@ -78,9 +78,11 @@ export default function Test() {
                 setIsLoading(false);
             }
         })(); //IIFE
-    }, [debounceQuery, page]);
+    }, [debounceLocality, page]);
 
     useEffect(() => {
+        if (showDropdown) return;
+
         (async () => {
             // avoid race conditions by cancelling all currently running requests
             // whenever a new one is made
@@ -89,11 +91,11 @@ export default function Test() {
 
             setIsLoading(true);
             setPostalCodeError("");
-            if (showDropdown || (!PLZQuery || PLZQuery.length < 3) || (!page || page < 1)) return;
+            if (showDropdown || (!debouncePostalCode || debouncePostalCode.length < 3) || (!page || page < 1)) return;
 
             try {
                 const response = await fetch(
-                    `${BASE_URL}/Localities?postalCode=${debouncePLZQuery}&page=${page}`,
+                    `${BASE_URL}/Localities?postalCode=${debouncePostalCode}&page=${page}`,
                     { signal: abortControllerRef.current?.signal } // renew controller, can't reuse them
                 );
                 const PLZs = (await response.json()) as Locality[];
@@ -114,10 +116,10 @@ export default function Test() {
                 setIsLoading(false);
             }
         })();
-    }, [debouncePLZQuery, page, showDropdown]);
+    }, [debouncePostalCode, page, showDropdown]);
 
     const handlePostalCodeSelect = (value: string) => {
-        setPostalCodeError(value);
+        setPostalCode(value);
         setShowDropdown(false);
     }
 
@@ -141,15 +143,22 @@ export default function Test() {
             </div>
             {showDropdown ?
                 <div>
-                    <select value={PLZQuery} onChange={handlePostalCodeSelect}>
+                    <select value={postalCode} onChange={e => { handlePostalCodeSelect(e.target.value) }}>
                         {postalCodes.map((plz) => {
                             return <option key={plz} value={plz}>{plz}</option>
                         })}
                     </select>
                 </div>
-                : <input type="text" placeholder="Search a postal code" value={PLZQuery} onChange={e => { setPLZQuery(e.target.value) }} />
+                : <input
+                    type="text"
+                    placeholder="Search a postal code"
+                    value={postalCode}
+                    onChange={e => {
+                        setPostalCode(e.target.value);
+                        setPostalCodeError("");
+                    }} />
             }
-            <p>{postalCodes && postalCodes.length > 0 && JSON.stringify(postalCodes[0])}</p>
+            {localityError && <span>{localityError}</span>}
             {/*<button onClick={() => setPage(page + 1)}>Next page (Current:{page})</button>*/}
         </div >
     );
